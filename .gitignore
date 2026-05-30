@@ -1,0 +1,10 @@
+data/raw/
+data/clean/
+*.csv
+*.xlsx
+*.shp
+*.dbf
+*.prj
+*.shx
+.Rhistory
+.RData
