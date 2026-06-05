@@ -23,8 +23,4 @@ visualisation and data science methods. It was produced as part of a
 - ONS Rural/Urban Classification: Office for National Statistics (Open Government Licence v3.0)
 
 ## Licence
-This work is licensed under Creative Commons Attribution 4.0 International 
-(CC-BY 4.0). You are free to share and adapt this material provided you 
-give appropriate credit to: Nina Akporiaye, University of Aberdeen / Rural Health 
-Compass, 2026.
-https://creativecommons.org/licenses/by/4.0/
+Rural Health Equity in Wales © 2026 by Nina Akporiaye is licensed under CC BY 4.0. To view a copy of this licence, visit https://creativecommons.org/licenses/by/4.0/
