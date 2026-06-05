@@ -8,3 +8,4 @@ data/clean/
 *.shx
 .Rhistory
 .RData
+.Rproj.user

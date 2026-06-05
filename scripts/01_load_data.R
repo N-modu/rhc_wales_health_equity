@@ -1,11 +1,13 @@
 # ============================================================
-# RHC Wales Health Equity Project
+# Project: Rural Health Equity in Wales
 # Script 01: Load & Inspect WIMD Data
-# Author: Nina
+# Author: Nina Akporiaye, University of Aberdeen
+# Organisation: Rural Health Compass (RHC)
+# Supervisor: Dr Veronika Rasic
 # Date: June 2026
-# Purpose: Load WIMD 2019 ranks and scores, inspect structure
+# Licence: CC BY 4.0
+# https://creativecommons.org/licenses/by/4.0/
 # ============================================================
-
 library(tidyverse)
 library(readODS)
 
