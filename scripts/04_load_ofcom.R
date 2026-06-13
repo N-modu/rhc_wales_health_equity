@@ -9,6 +9,13 @@ library(data.table)   # fast loading of large Ofcom CSV
 library(sf)           # spatial data handling for LSOA shapefiles
 library(tmap)         # choropleth maps
 library(readODS)      # loading WIMD ODS files
+# Load WIMD 2025 ranks
+wimd_ranks <- read_ods("data/raw/wimd2025_ranks.ods",
+                       sheet = "WIMD_2025_ranks",
+                       skip = 2)
+
+# Check column names
+names(wimd_ranks)
 # Load full UK-wide Ofcom residential broadband file
 ofcom_uk_raw <- fread("data/raw/202407_fixed_oa_res_coverage_r01.csv")
 # Check it loaded correctly
@@ -130,3 +137,61 @@ wimd_ranks <- read_ods("data/raw/wimd2025_ranks.ods",
 
 # Check column names
 names(wimd_ranks)
+# Rename LSOA code column for clean joining
+wimd_ranks_clean <- wimd_ranks |>
+  rename(LSOA21CD = `LSOA code`)
+
+# Join Ofcom LSOA data to WIMD 2025 ranks
+ofcom_wimd <- ofcom_lsoa |>
+  left_join(wimd_ranks_clean, by = "LSOA21CD")
+
+# Check the join
+nrow(ofcom_wimd)
+sum(is.na(ofcom_wimd$`WIMD 2025`))
+glimpse(ofcom_wimd)
+# Save master analytical dataset
+write_csv(ofcom_wimd, "data/processed/ofcom_wimd_master.csv")
+
+# Confirm saved
+file.exists("data/processed/ofcom_wimd_master.csv")
+# Load Rural Urban Classification
+ruc_lsoa <- fread("data/raw/ruc_lsoa_2021.csv")
+
+# Check it loaded correctly
+nrow(ruc_lsoa)
+names(ruc_lsoa)
+# Filter RUC to Wales only and select key columns
+ruc_wales <- ruc_lsoa |>
+  filter(str_starts(LSOA21CD, "W")) |>
+  select(LSOA21CD, RUC21CD, RUC21NM, Urban_rural_flag)
+
+# Check
+nrow(ruc_wales)
+
+# See what rural/urban categories exist in Wales
+ruc_wales |> count(RUC21NM)
+# Simplify to Urban vs Rural
+ruc_wales <- ruc_wales |>
+  mutate(rural_urban = case_when(
+    str_starts(RUC21NM, "Urban") ~ "Urban",
+    TRUE ~ "Rural"
+  ))
+
+# Check the split
+ruc_wales |> count(rural_urban)
+# Join RUC to master dataset
+ofcom_wimd_ruc <- ofcom_wimd |>
+  left_join(ruc_wales, by = "LSOA21CD")
+
+# Check
+nrow(ofcom_wimd_ruc)
+sum(is.na(ofcom_wimd_ruc$rural_urban))
+
+# Quick summary
+ofcom_wimd_ruc |> count(rural_urban)
+# Save final master dataset
+write_csv(ofcom_wimd_ruc, "data/processed/master_analytical_dataset.csv")
+
+# Confirm saved
+file.exists("data/processed/master_analytical_dataset.csv")
+
