@@ -79,3 +79,46 @@ write_csv(ofcom_wales_clean, "data/processed/ofcom_wales_fixed_broadband.csv")
 
 # Final sense check
 glimpse(ofcom_wales_clean)
+# Load OA to LSOA lookup
+oa_lsoa_lookup <- fread("data/raw/oa_to_lsoa_lookup_2021.csv")
+
+# Check it loaded correctly
+nrow(oa_lsoa_lookup)
+names(oa_lsoa_lookup)
+# Filter lookup to Wales only
+oa_lsoa_wales <- oa_lsoa_lookup |>
+  filter(str_starts(OA21CD, "W")) |>
+  select(OA21CD, LSOA21CD)
+
+# Check
+nrow(oa_lsoa_wales)
+
+# Join Ofcom Wales to LSOA lookup
+ofcom_wales_lsoa <- ofcom_wales_clean |>
+  left_join(oa_lsoa_wales, by = c("oa_code" = "OA21CD"))
+
+# Check join worked
+nrow(ofcom_wales_lsoa)
+sum(is.na(ofcom_wales_lsoa$LSOA21CD))
+# Aggregate Ofcom from OA to LSOA level
+ofcom_lsoa <- ofcom_wales_lsoa |>
+  group_by(LSOA21CD) |>
+  summarise(
+    n_oas                = n(),
+    total_premises       = sum(all_premises, na.rm = TRUE),
+    pct_sfbb             = weighted.mean(pct_sfbb, all_premises, na.rm = TRUE),
+    pct_below_30mbps     = weighted.mean(pct_below_30mbps, all_premises, na.rm = TRUE),
+    pct_below_uso        = weighted.mean(pct_below_uso, all_premises, na.rm = TRUE),
+    pct_gigabit          = weighted.mean(pct_gigabit, all_premises, na.rm = TRUE),
+    pct_below_2mbps      = weighted.mean(pct_below_2mbps, all_premises, na.rm = TRUE),
+    pct_below_10mbps     = weighted.mean(pct_below_10mbps, all_premises, na.rm = TRUE)
+  )
+
+# Check
+nrow(ofcom_lsoa)
+glimpse(ofcom_lsoa)
+# Save aggregated LSOA level Ofcom data
+write_csv(ofcom_lsoa, "data/processed/ofcom_lsoa_wales.csv")
+
+# Confirm saved
+file.exists("data/processed/ofcom_lsoa_wales.csv")
