@@ -8,6 +8,7 @@ library(tidyverse)    # filter, mutate, summarise, joins, ggplot2
 library(data.table)   # fast loading of large Ofcom CSV
 library(sf)           # spatial data handling for LSOA shapefiles
 library(tmap)         # choropleth maps
+library(readODS)      # loading WIMD ODS files
 # Load full UK-wide Ofcom residential broadband file
 ofcom_uk_raw <- fread("data/raw/202407_fixed_oa_res_coverage_r01.csv")
 # Check it loaded correctly
@@ -122,3 +123,10 @@ write_csv(ofcom_lsoa, "data/processed/ofcom_lsoa_wales.csv")
 
 # Confirm saved
 file.exists("data/processed/ofcom_lsoa_wales.csv")
+# Load WIMD 2025 ranks (already cleaned in script 03)
+wimd_ranks <- read_ods("data/raw/wimd2025_ranks.ods", 
+                       sheet = "WIMD_2025_ranks", 
+                       skip = 2)
+
+# Check column names
+names(wimd_ranks)
