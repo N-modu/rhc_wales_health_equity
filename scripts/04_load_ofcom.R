@@ -194,4 +194,28 @@ write_csv(ofcom_wimd_ruc, "data/processed/master_analytical_dataset.csv")
 
 # Confirm saved
 file.exists("data/processed/master_analytical_dataset.csv")
+# Load LSOA boundary file
+lsoa_boundaries <- st_read("data/raw/lsoa_boundaries_2021.geojson")
 
+# Check
+nrow(lsoa_boundaries)
+names(lsoa_boundaries)
+# Filter boundaries to Wales only
+wales_boundaries <- lsoa_boundaries |>
+  filter(str_starts(LSOA21CD, "W"))
+
+# Check
+nrow(wales_boundaries)
+
+# Join master dataset to boundaries
+wales_map_data <- wales_boundaries |>
+  left_join(ofcom_wimd_ruc, by = "LSOA21CD")
+
+# Check
+nrow(wales_map_data)
+sum(is.na(wales_map_data$pct_below_30mbps))
+# Save final map-ready dataset
+write_csv(st_drop_geometry(wales_map_data), "data/processed/wales_map_data.csv")
+
+# Confirm saved
+file.exists("data/processed/wales_map_data.csv")
