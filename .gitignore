@@ -9,3 +9,4 @@ data/clean/
 .Rhistory
 .RData
 .Rproj.user
+!outputs/*.csv
