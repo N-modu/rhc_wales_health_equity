@@ -7,13 +7,15 @@
 # rural n=157) that was initially interpreted as underpowered. Disaggregating
 # by WIMD domain revealed this was masking directionally opposed effects.
 # This script reproduces that disaggregation in the committed pipeline,
-# rather than leaving it as one-off exploratory analysis outside GitHub.
-#
-# STATUS: exploratory / hypothesis-generating. NOT confirmatory.
-# No correction has been applied for multiple comparisons across domains.
-# If used for anything beyond internal exploration, that needs to be
-# addressed explicitly (see MULTIPLE COMPARISONS note below), and this
-# status line should be updated to reflect the decision made.
+# rather than leaving it as one-off exploratory analysis outside GitHub
+
+# STATUS: exploratory / hypothesis-generating. Multiple-comparisons
+# correction checked by hand 2026-07 (BH, per-group) - all rural
+# p-values remain significant by many orders of magnitude, and the
+# same 2 of 8 urban domains (Access to Services, Housing) remain the
+# only significant ones. Correction does not change any conclusion,
+# so it was not added to the script; this note documents that the
+# check was done rather than skipped.
 # ============================================================
 
 library(dplyr)
