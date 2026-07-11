@@ -77,3 +77,12 @@ wimd2025_ranks <- wimd2025_ranks |>
 
 ncol(wimd2025_ranks)
 message("WIMD 2025 data loaded successfully!")
+# ── Load Ofcom residential coverage data ─────────────────────
+ofcom_coverage <- read_csv(
+  "data/raw/202407_fixed_oa_res_coverage_r01.csv"
+)
+
+# ── Inspect ───────────────────────────────────────────────────
+nrow(ofcom_coverage)
+names(ofcom_coverage)
+head(ofcom_coverage, 5)

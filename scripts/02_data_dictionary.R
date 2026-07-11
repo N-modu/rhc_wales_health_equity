@@ -50,7 +50,6 @@ cat("Ranks rows:", nrow(wimd_ranks), "\n")
 cat("Scores rows:", nrow(wimd_scores), "\n")
 cat("Missing values in ranks:\n")
 print(colSums(is.na(wimd_ranks)))
-# ── DATASET 3: WIMD 2025 Ranks ─────────────────────────────
 cat("=== DATASET 3: WIMD 2025 Ranks ===\n")
 cat("Source: Welsh Government\n")
 cat("URL: https://www.gov.wales/welsh-index-multiple-deprivation-2025\n")
@@ -207,8 +206,6 @@ cat("Source: NHS Wales\n")
 cat("Purpose: Location of all GP surgeries in Wales\n")
 cat("Use: Ruthikssha RQ2 - GP access analysis\n")
 cat("Status: AVAILABILITY TO CONFIRM\n\n")
-
-# ── UPDATED QUICK DATA CHECKS ──────────────────────────────
 cat("=== UPDATED QUICK DATA CHECKS ===\n")
 cat("WIMD 2019 Ranks rows:", nrow(wimd_ranks), "\n")
 cat("WIMD 2019 Scores rows:", nrow(wimd_scores), "\n")
