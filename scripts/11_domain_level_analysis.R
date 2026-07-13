@@ -38,20 +38,23 @@ stopifnot(anyDuplicated(grouped$LSOA21CD) == 0)
 cat("No duplicate LSOAs across groups - check passed.\n")
 
 # ── Section 4: Domain construction metadata ──────────────────────────────
+# Bias split refined 2026-07-13 after supervision meeting with Dr Rasic:
+# distance-based bias (geography/density built into the measure) is now
+# separated from definitional bias (what the measure counts as
+# "deprived" may fit urban patterns better than rural ones). See
+# RQ3_interpretation_policy_note.docx and process_report.md for full reasoning.
 domain_metadata <- tribble(
-  ~domain,                 ~wimd_weight, ~construction_type,                                          ~mechanical_bias,
-  "Income",                 0.22,        "administrative (means-tested benefit/tax credit counts)",   "none expected",
-  "Employment",              0.20,        "administrative (unemployment-related benefit claims)",      "none expected",
-  "Health",                  0.15,        "GP-recorded conditions, mental health, cancer; age-sex standardised", "none expected",
-  "Education",               0.14,        "attainment scores and absenteeism records",                 "none obvious",
-  "Access to Services",      0.10,        "average travel time to services by public/private transport", "favours dense areas - rural structurally disadvantaged",
-  "Housing",                 0.09,        "affordability (market entry cost) and physical condition",  "mixed",
-  "Community Safety",        0.05,        "police-recorded crime rate (violence, theft, robbery)",      "favours low-density areas - rural structurally advantaged",
-  "Physical Environment",    0.05,        "air quality, noise pollution, green space (NDVI)",          "favours low-density areas - rural structurally advantaged",
-  "Digital Exclusion",       NA,          "Ofcom premises-level broadband availability (% below 30 Mbps)", "infrastructure/distance-linked, similar to Access to Services"
+  ~domain,                 ~wimd_weight, ~construction_type,                                          ~bias_type,      ~bias_note,
+  "Income",                 0.22,        "administrative (means-tested benefit/tax credit counts)",   "definitional",  "benefit-claim based; may undercount rural seasonal/precarious work as deprivation",
+  "Employment",              0.20,        "administrative (unemployment-related benefit claims)",      "definitional",  "same as Income - together 42% of WIMD weight, worth treating as an open question not a settled finding",
+  "Health",                  0.15,        "GP-recorded conditions, mental health, cancer; age-sex standardised", "none",  "no obvious bias identified",
+  "Education",               0.14,        "attainment scores and absenteeism records",                 "none",          "no obvious bias identified",
+  "Access to Services",      0.10,        "average travel time to services by public/private transport", "distance",    "90% travel-time, 10% broadband; favours dense areas by construction",
+  "Housing",                 0.09,        "affordability (market entry cost) and physical condition",  "gap",           "does not measure second homes, holiday lets, or seasonal vacancy at all - may be missing a real rural housing dynamic entirely",
+  "Community Safety",        0.05,        "police-recorded crime rate (violence, theft, robbery)",      "distance",     "favours low-density areas by construction",
+  "Physical Environment",    0.05,        "air quality, noise pollution, green space (NDVI)",          "distance",      "favours low-density areas by construction",
+  "Digital Exclusion",       NA,          "Ofcom premises-level broadband availability (% below 30 Mbps)", "distance",  "infrastructure/distance-linked, similar to Access to Services"
 )
-
-print(domain_metadata)
 
 # ── Section 5: Kruskal-Wallis test across 4 areas, all 9 variables ───────
 domains <- c("Income", "Employment", "Health", "Education",
@@ -79,7 +82,7 @@ kruskal_results$p_adjusted <- p.adjust(kruskal_results$p_value, method = "BH")
 
 kruskal_results <- kruskal_results |>
   left_join(domain_metadata, by = "domain") |>
-  select(domain, chi_sq, p_adjusted, epsilon_sq, construction_type, mechanical_bias) |>
+  select(domain, chi_sq, p_adjusted, epsilon_sq, construction_type, bias_type, bias_note) |>
   arrange(desc(epsilon_sq))
 
 print(kruskal_results)
